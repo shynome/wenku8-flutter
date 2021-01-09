@@ -15,7 +15,7 @@ class ScreenArguments {
 }
 
 class ChapterPageState extends State<ChapterPage> {
-  Future<String> content;
+  Future<List<String>> content;
   String id;
 
   @override
@@ -25,7 +25,8 @@ class ChapterPageState extends State<ChapterPage> {
     var cid = args.bid + args.cid;
     if (cid != id) {
       setState(() {
-        content = getChapterContent(args.bid, args.cid);
+        content = getChapterContent(args.bid, args.cid)
+            .then((value) => value.split(delimiter));
         id = cid;
       });
     }
@@ -34,16 +35,23 @@ class ChapterPageState extends State<ChapterPage> {
       appBar: AppBar(
         title: Text(args.bid),
       ),
-      body: FutureBuilder<String>(
+      body: FutureBuilder<List<String>>(
         future: content,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
             return LinearProgressIndicator();
           }
-          return SingleChildScrollView(
-            child: Container(
+          return Scrollbar(
+            child: ListView(
               padding: const EdgeInsets.fromLTRB(15, 15, 15, 75),
-              child: Text(snapshot.data),
+              primary: true,
+              children: snapshot.data
+                  .map(
+                    (p) => Container(
+                      child: Text(p + "\r\n", style: TextStyle(fontSize: 16)),
+                    ),
+                  )
+                  .toList(),
             ),
           );
         },

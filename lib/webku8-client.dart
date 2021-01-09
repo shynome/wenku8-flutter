@@ -63,6 +63,8 @@ Future<Book> getBook(String bid) async {
   return book;
 }
 
+var delimiter = new RegExp(r'\s+\r\n');
+
 Future<String> getChapterContent(String bid, String cid) async {
   var content = await http
       .get(

@@ -17,5 +17,10 @@ void main() {
       var content = await getChapterContent("1861", "65288");
       return;
     });
+    test("getChapterContent delimiter", () async {
+      var content = await getChapterContent("1861", "65288");
+      var s = content.split(delimiter);
+      return;
+    });
   });
 }
