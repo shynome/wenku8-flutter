@@ -24,5 +24,9 @@ void main() async {
       await client.updateBook(book);
       return;
     });
+    test("getChapter", () async {
+      var chapter = await client.getChapter(65286);
+      return;
+    });
   });
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wenku8/wenku8/client.dart';
+import 'package:wenku8/wenku8/webku8.dart';
 import 'wenku8/utils.dart';
 
 class ChapterPage extends StatefulWidget {
@@ -10,9 +12,8 @@ class ChapterPage extends StatefulWidget {
 }
 
 class ScreenArguments {
-  String bid;
   String cid;
-  ScreenArguments(this.bid, this.cid);
+  ScreenArguments({this.cid});
 }
 
 class Body extends StatelessWidget {
@@ -29,9 +30,15 @@ class Body extends StatelessWidget {
   }
 }
 
+class FState {
+  List<String> content;
+  Chapter chapter;
+}
+
 class ChapterPageState extends State<ChapterPage> {
-  Future<List<String>> content;
+  Future<FState> f;
   String id;
+  Chapter chapter;
 
   @override
   void dispose() {
@@ -49,34 +56,41 @@ class ChapterPageState extends State<ChapterPage> {
   Widget build(BuildContext context) {
     final ScreenArguments args = ModalRoute.of(context).settings?.arguments;
 
-    var cid = args.bid + args.cid;
+    var cid = args.cid;
     if (cid != id) {
       setState(() {
-        content = getChapterContent(args.bid, args.cid)
-            .then((value) => value.split(delimiter));
+        f = client.getChapter(int.parse(args.cid)).then((chapter) {
+          var f = FState();
+          f.content = chapter.content.split(delimiter);
+          chapter.content = "";
+          f.chapter = chapter;
+          return f;
+        });
         id = cid;
       });
     }
 
     return Scaffold(
-      body: FutureBuilder<List<String>>(
-        future: content,
+      body: FutureBuilder<FState>(
+        future: f,
         builder: (ctx, snapshot) {
-          var appBar = SliverAppBar(
-            title: Text(args.bid),
-            floating: true,
-          );
           if (snapshot.connectionState != ConnectionState.done) {
             return Body(
-              appBar,
+              SliverAppBar(
+                title: Text("加载中"),
+                floating: true,
+              ),
               SliverToBoxAdapter(child: LinearProgressIndicator()),
             );
           }
-          var list = snapshot.data
-              .map((p) => Text(p + "\r\n", style: TextStyle(fontSize: 16)))
+          var list = snapshot.data.content
+              .map((p) => Text(p, style: TextStyle(fontSize: 16)))
               .toList();
           return Body(
-            appBar,
+            SliverAppBar(
+              title: Text(snapshot.data.chapter.name),
+              floating: true,
+            ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(15, 15, 15, 75),
               sliver: SliverList(delegate: SliverChildListDelegate(list)),

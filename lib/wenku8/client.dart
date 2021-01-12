@@ -162,6 +162,69 @@ class Wenku8Client {
       return newChapterCount;
     });
   }
+
+  Future<Chapter> getChapter(int cid) async {
+    var chapter = await db.query(Chapter.TableName,
+        where: "cid = ?",
+        whereArgs: [cid]).then((value) => Chapter.fromMap(value.first));
+    if (chapter.content != null) {
+      return chapter;
+    }
+    var content = await utils.getChapterContent(
+      chapter.bid.toString(),
+      chapter.cid.toString(),
+    );
+    await updateChapters(chapter, content);
+    return getChapter(cid);
+  }
+
+  updateChapters(Chapter chapter, String content) async {
+    var strs = content.split(utils.delimiter);
+    var chapters = await db.query(
+      Chapter.TableName,
+      where: "`order` >= ? and bid = ? and vid = ?",
+      whereArgs: [chapter.order, chapter.bid, chapter.vid],
+    ).then((value) => value.map((e) => Chapter.fromMap(e)).toList());
+
+    var batch = db.batch();
+    var index = -1;
+    var matcher = "  " + chapters.first.name;
+    var str = "";
+    // var ss = <String>[];
+    addContent() {
+      var chapter = chapters[index];
+      batch.update(
+        Chapter.TableName,
+        <String, dynamic>{"content": str},
+        where: "cid = ?",
+        whereArgs: [chapter.cid],
+      );
+      // ss.add(str);
+    }
+
+    for (var s in strs) {
+      var matched = matcher == s;
+      if (matched) {
+        if (index >= chapters.length - 1) {
+          break;
+        }
+        if (index >= 0) {
+          addContent();
+        }
+        index++;
+        str = "";
+        if (index + 1 >= chapters.length) {
+          matcher = "";
+        } else {
+          matcher = "  " + chapters[index + 1].name;
+        }
+      }
+      str = str + s + "\r\n";
+    }
+    addContent();
+    await batch.commit();
+    return;
+  }
 }
 
 var client = Wenku8Client();

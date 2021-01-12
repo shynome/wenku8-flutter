@@ -38,8 +38,7 @@ class ChaptersVol extends StatelessWidget {
                           context,
                           "/chapter",
                           arguments: chapter.ScreenArguments(
-                            bid,
-                            e.cid.toString(),
+                            cid: e.cid.toString(),
                           ),
                         );
                       },
