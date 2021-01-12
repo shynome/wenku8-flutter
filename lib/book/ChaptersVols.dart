@@ -57,12 +57,21 @@ class ChaptersVol extends StatelessWidget {
   }
 }
 
-class ChaptersVols extends StatelessWidget {
+class ChaptersVols extends StatefulWidget {
   final wenku8.Book book;
   ChaptersVols(this.book);
 
-  refresh(BuildContext context) async {
-    var newChapterCount = await client.updateBook2(book.bid.toString());
+  @override
+  State<StatefulWidget> createState() {
+    return ChaptersVolsState();
+  }
+}
+
+class ChaptersVolsState extends State<ChaptersVols> {
+  bool refreshing = false;
+  _refresh(BuildContext context) async {
+    Fluttertoast.showToast(msg: "查询新章节中");
+    var newChapterCount = await client.updateBook2(widget.book.bid.toString());
     if (newChapterCount == 0) {
       Fluttertoast.showToast(msg: "没有新的章节");
       return;
@@ -71,30 +80,50 @@ class ChaptersVols extends StatelessWidget {
     Navigator.pushReplacementNamed(
       context,
       "/book",
-      arguments: ScreenArguments(bid: book.bid.toString()),
+      arguments: ScreenArguments(bid: widget.book.bid.toString()),
     );
     return;
   }
 
+  refresh(BuildContext context) async {
+    if (refreshing) {
+      return;
+    }
+    setState(() {
+      refreshing = true;
+    });
+    try {
+      await _refresh(context);
+    } finally {
+      setState(() {
+        refreshing = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    var handlePressed = () => refresh(context);
+    if (refreshing) {
+      handlePressed = null;
+    }
     return Scaffold(
       appBar: AppBar(
-        title: Text(this.book.name),
+        title: Text(widget.book.name),
         actions: <Widget>[
           Tooltip(
             message: "点击刷新, 获取最新数据",
             child: IconButton(
               icon: Icon(Icons.refresh_outlined),
-              onPressed: () => refresh(context),
+              onPressed: handlePressed,
             ),
           ),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
-        children: book.chaptersVols
-            .map((e) => ChaptersVol(book.bid.toString(), e))
+        children: widget.book.chaptersVols
+            .map((e) => ChaptersVol(widget.book.bid.toString(), e))
             .toList(),
       ),
     );
