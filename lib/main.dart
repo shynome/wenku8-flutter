@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wenku8/chapter.dart';
 import './search.dart';
 import 'book/book.dart';
+import 'db/db.dart' as db;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await db.init();
+
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return MaterialApp(
       title: 'wenku8 reader',
       theme: ThemeData(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wenku8/wenku8/client.dart' show client;
 import './notfound.dart';
 import './ChaptersVols.dart';
-import '../webku8.dart';
-import '../webku8-client.dart';
+import '../wenku8/webku8.dart';
 
 class BookPage extends StatefulWidget {
   @override
@@ -13,7 +13,7 @@ class BookPage extends StatefulWidget {
 
 class ScreenArguments {
   String bid;
-  ScreenArguments(this.bid);
+  ScreenArguments({this.bid});
 }
 
 class BookPageState extends State<BookPage> {
@@ -28,7 +28,7 @@ class BookPageState extends State<BookPage> {
     }
     if (args.bid != id) {
       setState(() {
-        book = getBook(args.bid);
+        book = client.getBook2(args.bid);
         id = args.bid;
       });
     }

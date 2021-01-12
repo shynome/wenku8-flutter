@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import './webku8-client.dart';
+import 'wenku8/utils.dart';
 
 class ChapterPage extends StatefulWidget {
   @override
@@ -35,7 +35,7 @@ class ChapterPageState extends State<ChapterPage> {
 
   @override
   void dispose() {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
+    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     super.dispose();
   }
 

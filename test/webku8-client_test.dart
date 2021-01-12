@@ -1,25 +1,27 @@
-import 'package:wenku8/webku8-client.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:wenku8/wenku8/client.dart' show client;
+import 'package:wenku8/wenku8/utils.dart' as utils;
 import 'package:test/test.dart';
+import 'package:wenku8/db/db.dart' show init;
+import 'package:wenku8/db/db.dart' show db;
 
-void main() {
+void main() async {
+  sqfliteFfiInit();
+  await init(dbPath: "/tmp/test.db");
   group("wenku8 client", () {
-    test("getLink", () async {
-      var a = await getLink("1861");
-      expect(a, "https://www.wenku8.net/novel/1/1861/index.htm");
-    });
-    test("getChaptersVol", () async {
-      var book = await getChaptersVol(
-          "https://www.wenku8.net/novel/1/1861/index.htm", "1861");
-      // expect(book, null);
+    test("createBook", () async {
+      var book = await utils.getBook("1861");
+      await client.createBook(book);
       return;
     });
-    test("getChapterContent", () async {
-      var content = await getChapterContent("1861", "65288");
+    test("getBook", () async {
+      var book = await client.getBook("1861");
       return;
     });
-    test("getChapterContent delimiter", () async {
-      var content = await getChapterContent("1861", "65288");
-      var s = content.split(delimiter);
+
+    test("updateBook", () async {
+      var book = await utils.getBook("1861");
+      await client.updateBook(book);
       return;
     });
   });

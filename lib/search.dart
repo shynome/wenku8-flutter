@@ -26,7 +26,7 @@ class SearchFormState extends State<SearchForm> {
     Navigator.pushNamed(
       context,
       "/book",
-      arguments: book.ScreenArguments(this.form.bid),
+      arguments: book.ScreenArguments(bid: this.form.bid),
     );
   }
 

@@ -4,9 +4,14 @@ import 'package:gbk2utf8/gbk2utf8.dart' show gbk;
 import 'package:utf/utf.dart';
 import './webku8.dart';
 
+Future<http.Response> mustGetLink(String link) {
+  return http.get(link).then((value) {
+    return value;
+  });
+}
+
 Future<String> getLink(String bid) async {
-  var doc = await http
-      .get("https://www.wenku8.net/book/${bid}.htm")
+  var doc = await mustGetLink("https://www.wenku8.net/book/${bid}.htm")
       .then((value) => value.bodyBytes)
       .then((value) => gbk.decode(value))
       .then((value) => parse(value));
@@ -14,11 +19,10 @@ Future<String> getLink(String bid) async {
   return a.attributes["href"];
 }
 
-ChaptersVol _getEmptyVol() => ChaptersVol("", []);
+ChaptersVol _getEmptyVol() => ChaptersVol(name: "", chapters: []);
 
 Future<Book> getChaptersVol(String link, String bid) async {
-  var doc = await http
-      .get(link)
+  var doc = await mustGetLink(link)
       .then((value) => value.bodyBytes)
       .then((value) => gbk.decode(value))
       .then((value) => parse(value));
@@ -35,25 +39,26 @@ Future<Book> getChaptersVol(String link, String bid) async {
       vols.add(vol);
       continue;
     }
-    var aList = n.querySelectorAll("a");
-    if (aList.length == 0) {
+    var a = n.querySelector("a");
+    if (a == null) {
       // 跳过填充用的 td
       continue;
     }
-    var a = aList.first;
-    var cid = a.attributes["href"];
-    var name = a.text;
+    var cid = int.parse(
+      a.attributes["href"].substring(0, a.attributes["href"].length - 4),
+    );
     var chapter = Chapter(
-      name,
-      cid,
-      vol.chapters.length,
+      name: a.text,
+      cid: cid,
+      order: vol.chapters.length,
     );
     vol.chapters.add(chapter);
   }
-  var book = Book();
-  book.bid = bid;
-  book.name = doc.querySelector("#title").text;
-  book.chaptersVols = vols;
+  var book = Book(
+    bid: int.parse(bid),
+    name: doc.querySelector("#title").text,
+    chaptersVols: vols,
+  );
   return book;
 }
 
@@ -66,9 +71,9 @@ Future<Book> getBook(String bid) async {
 var delimiter = new RegExp(r'\s+\r\n');
 
 Future<String> getChapterContent(String bid, String cid) async {
-  var content = await http
-      .get(
-          "http://dl.wenku8.com/packtxt.php?aid=${bid}&vid=${cid}&aname=1&vname=1")
-      .then((value) => decodeUtf16le(value.bodyBytes));
+  var link =
+      "http://dl.wenku8.com/packtxt.php?aid=${bid}&vid=${cid}&aname=1&vname=1";
+  var content =
+      await mustGetLink(link).then((value) => decodeUtf16le(value.bodyBytes));
   return content;
 }
