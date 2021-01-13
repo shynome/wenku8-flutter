@@ -41,18 +41,6 @@ class ChapterPageState extends State<ChapterPage> {
   Chapter chapter;
 
   @override
-  void dispose() {
-    SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final ScreenArguments args = ModalRoute.of(context).settings?.arguments;
 
@@ -61,7 +49,7 @@ class ChapterPageState extends State<ChapterPage> {
       setState(() {
         f = client.getChapter(int.parse(args.cid)).then((chapter) {
           var f = FState();
-          f.content = chapter.content.split(delimiter);
+          f.content = chapter.content.split("\r\n");
           chapter.content = "";
           f.chapter = chapter;
           return f;
@@ -84,7 +72,7 @@ class ChapterPageState extends State<ChapterPage> {
             );
           }
           var list = snapshot.data.content
-              .map((p) => Text(p, style: TextStyle(fontSize: 16)))
+              .map((p) => Text(p + "\r\n", style: TextStyle(fontSize: 16)))
               .toList();
           return Body(
             SliverAppBar(
