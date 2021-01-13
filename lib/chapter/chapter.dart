@@ -34,6 +34,18 @@ class Body extends StatelessWidget {
 class FState {
   List<String> content;
   Chapter chapter;
+  ChaptersVol vol;
+}
+
+Future<FState> getFState(String _cid) async {
+  var f = FState();
+  var cid = int.parse(_cid);
+  var chapter = await client.getChapter(cid);
+  f.content = chapter.content.split("\r\n");
+  chapter.content = "";
+  f.chapter = chapter;
+  f.vol = await client.getChaptersVol(chapter.vid);
+  return f;
 }
 
 class ChapterPageState extends State<ChapterPage> {
@@ -48,13 +60,7 @@ class ChapterPageState extends State<ChapterPage> {
     var cid = args.cid;
     if (cid != id) {
       setState(() {
-        f = client.getChapter(int.parse(args.cid)).then((chapter) {
-          var f = FState();
-          f.content = chapter.content.split("\r\n");
-          chapter.content = "";
-          f.chapter = chapter;
-          return f;
-        });
+        f = getFState(cid);
         id = cid;
       });
     }
@@ -73,6 +79,7 @@ class ChapterPageState extends State<ChapterPage> {
             );
           }
           var chapter = snapshot.data.chapter;
+          var vol = snapshot.data.vol;
           List<Widget> list = snapshot.data.content
               .map((p) => Text(p + "\r\n", style: TextStyle(fontSize: 16)))
               .map((p) => Container(child: p))
@@ -80,8 +87,16 @@ class ChapterPageState extends State<ChapterPage> {
           list.add(Container(child: NextChapter(chapter)));
           return Body(
             SliverAppBar(
-              title: Text(chapter.name),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(vol.name),
+                  GestureDetector(child: Text(chapter.name)),
+                ],
+              ),
               floating: true,
+              // expandedHeight: 80,
+              // flexibleSpace: FlexibleSpaceBar(title: Text(chapter.name)),
             ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(15, 15, 15, 75),

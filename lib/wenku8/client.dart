@@ -164,9 +164,14 @@ class Wenku8Client {
   }
 
   Future<Chapter> getChapter(int cid) async {
-    var chapter = await db.query(Chapter.TableName,
-        where: "cid = ?",
-        whereArgs: [cid]).then((value) => Chapter.fromMap(value.first));
+    var chapter = await db
+        .query(
+          Chapter.TableName,
+          where: "cid = ?",
+          whereArgs: [cid],
+          limit: 1,
+        )
+        .then((value) => Chapter.fromMap(value.first));
     if (chapter.content != null) {
       return chapter;
     }
@@ -224,6 +229,22 @@ class Wenku8Client {
     addContent();
     await batch.commit();
     return;
+  }
+
+  Future<ChaptersVol> getChaptersVol(int vid) async {
+    return db
+        .query(
+      ChaptersVol.TableName,
+      where: "vid = ?",
+      whereArgs: [vid],
+      limit: 1,
+    )
+        .then((value) {
+      if (value.length == 0) {
+        return null;
+      }
+      return ChaptersVol.fromMap(value.first);
+    });
   }
 }
 
