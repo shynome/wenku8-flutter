@@ -4,11 +4,11 @@ import '../wenku8/webku8.dart' as wenku8;
 import '../chapter/chapter.dart' as chapter;
 import 'package:fluttertoast/fluttertoast.dart';
 import './book.dart' show ScreenArguments;
+import './header.dart';
 
 class ChaptersVol extends StatelessWidget {
   final wenku8.ChaptersVol vol;
-  final String bid;
-  ChaptersVol(this.bid, this.vol);
+  ChaptersVol(this.vol);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -106,6 +106,11 @@ class ChaptersVolsState extends State<ChaptersVols> {
     if (refreshing) {
       handlePressed = null;
     }
+    var list = <Widget>[
+      Header(widget.book),
+    ];
+    list.addAll(widget.book.chaptersVols.map((vol) => ChaptersVol(vol)));
+    list = list.map((e) => Container(child: e)).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.book.name),
@@ -121,9 +126,7 @@ class ChaptersVolsState extends State<ChaptersVols> {
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
-        children: widget.book.chaptersVols
-            .map((e) => ChaptersVol(widget.book.bid.toString(), e))
-            .toList(),
+        children: list,
       ),
     );
   }
