@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wenku8/chapter.dart';
+import 'package:wenku8/chapter/chapter.dart';
 import './search.dart';
 import 'book/book.dart';
 import 'db/db.dart' as db;

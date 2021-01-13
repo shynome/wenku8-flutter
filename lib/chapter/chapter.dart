@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wenku8/wenku8/client.dart';
 import 'package:wenku8/wenku8/webku8.dart';
-import 'wenku8/utils.dart';
+import '../wenku8/utils.dart';
+import './next.dart';
 
 class ChapterPage extends StatefulWidget {
   @override
@@ -71,12 +72,15 @@ class ChapterPageState extends State<ChapterPage> {
               SliverToBoxAdapter(child: LinearProgressIndicator()),
             );
           }
-          var list = snapshot.data.content
+          var chapter = snapshot.data.chapter;
+          List<Widget> list = snapshot.data.content
               .map((p) => Text(p + "\r\n", style: TextStyle(fontSize: 16)))
+              .map((p) => Container(child: p))
               .toList();
+          list.add(Container(child: NextChapter(chapter)));
           return Body(
             SliverAppBar(
-              title: Text(snapshot.data.chapter.name),
+              title: Text(chapter.name),
               floating: true,
             ),
             SliverPadding(

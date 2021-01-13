@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wenku8/wenku8/client.dart';
 import '../wenku8/webku8.dart' as wenku8;
-import '../chapter.dart' as chapter;
+import '../chapter/chapter.dart' as chapter;
 import 'package:fluttertoast/fluttertoast.dart';
 import './book.dart' show ScreenArguments;
 
