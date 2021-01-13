@@ -193,7 +193,7 @@ class Wenku8Client {
 
     var batch = db.batch();
     var index = -1;
-    var matcher = "  " + chapters.first.name;
+    var matcher = new RegExp(r"^\s{2}\S+");
     var str = "";
     // var ss = <String>[];
     addContent() {
@@ -208,7 +208,7 @@ class Wenku8Client {
     }
 
     for (var s in strs) {
-      var matched = matcher == s;
+      var matched = matcher.hasMatch(s);
       if (matched) {
         if (index >= chapters.length - 1) {
           break;
@@ -218,11 +218,6 @@ class Wenku8Client {
         }
         index++;
         str = "";
-        if (index + 1 >= chapters.length) {
-          matcher = "";
-        } else {
-          matcher = "  " + chapters[index + 1].name;
-        }
       }
       str = str + s + "\r\n";
     }
