@@ -128,7 +128,7 @@ class ChapterPageState extends State<ChapterPage> {
           var record = snapshot.data.record;
           var vol = snapshot.data.vol;
           var offset = 0;
-          if (record.cid == chapter.cid) {
+          if (record != null && record.cid == chapter.cid) {
             offset = record.offset;
           }
           return Body(
