@@ -33,5 +33,9 @@ void main() async {
       await client.updateReadRecord(65286);
       return;
     });
+    test("getReadRecord", () async {
+      var record = await client.getReadRecord(1862);
+      return;
+    });
   });
 }
