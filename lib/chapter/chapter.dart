@@ -21,12 +21,17 @@ class ScreenArguments {
 class Body extends StatelessWidget {
   final Widget appBar;
   final Widget child;
-  Body(this.appBar, this.child);
+  final Widget last;
+  Body(this.appBar, this.child, [this.last]);
   @override
   Widget build(BuildContext context) {
+    var l = [appBar, child];
+    if (last != null) {
+      l.add(last);
+    }
     return Scrollbar(
       child: CustomScrollView(
-        slivers: [appBar, child],
+        slivers: l,
       ),
     );
   }
@@ -82,19 +87,15 @@ class ChapterPageState extends State<ChapterPage> {
             );
           }
           var chapter = snapshot.data.chapter;
+          var content = snapshot.data.content;
           var vol = snapshot.data.vol;
-          List<Widget> list = snapshot.data.content
-              .map((p) => Text(p + "\r\n", style: TextStyle(fontSize: 16)))
-              .map((p) => Container(child: p))
-              .toList();
-          list.add(Container(child: NextChapter(chapter)));
           return Body(
             SliverAppBar(
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(vol.name),
-                  GestureDetector(child: Text(chapter.name)),
+                  Text(chapter.name, style: TextStyle(fontSize: 14)),
                 ],
               ),
               floating: true,
@@ -113,12 +114,22 @@ class ChapterPageState extends State<ChapterPage> {
                   },
                 )
               ],
-              // expandedHeight: 80,
-              // flexibleSpace: FlexibleSpaceBar(title: Text(chapter.name)),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(15, 15, 15, 75),
-              sliver: SliverList(delegate: SliverChildListDelegate(list)),
+              padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    var p = snapshot.data.content[index];
+                    return Text(p + "\r\n", style: TextStyle(fontSize: 16));
+                  },
+                  childCount: content.length,
+                ),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(15, 5, 15, 100),
+              sliver: SliverToBoxAdapter(child: NextChapter(chapter)),
             ),
           );
         },
