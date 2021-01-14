@@ -96,33 +96,47 @@ class RecordsRenderState extends State<RecordsRender>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return FutureBuilder<List<_Item>>(
-      future: data,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return Column(
-            children: [LinearProgressIndicator()],
-          );
-        }
-        var records = snapshot.data;
-        if (records.length == 0) {
-          return Center(
-            child: Text(
-              "没有阅读记录, 右滑去搜索页吧",
-              style: TextStyle(fontSize: 18),
-            ),
-          );
-        }
-        return Scrollbar(
-          child: RefreshIndicator(
-            onRefresh: () async {
-              await refresh();
-            },
-            child: ListView(
-              children: records.map((item) {
+    return RefreshIndicator(
+      onRefresh: () async {
+        await refresh();
+      },
+      child: Scrollbar(
+        child: FutureBuilder<List<_Item>>(
+          future: data,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return Column(
+                children: [LinearProgressIndicator()],
+              );
+            }
+            var records = snapshot.data;
+            if (records.length == 0) {
+              return ListView(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "没有阅读记录, 右滑去搜索页吧",
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+            return ListView.builder(
+              itemCount: records.length,
+              itemBuilder: (context, index) {
+                var item = records[index];
                 var n = item.names;
                 return Slidable(
                   actionPane: SlidableDrawerActionPane(),
+                  key: Key(item.record.bid.toString()),
                   // actionExtentRatio: 0.25,
                   child: Tooltip(
                     message: "点击继续阅读",
@@ -149,11 +163,11 @@ class RecordsRenderState extends State<RecordsRender>
                     ),
                   ],
                 );
-              }).toList(),
-            ),
-          ),
-        );
-      },
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 }

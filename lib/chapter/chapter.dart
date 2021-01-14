@@ -103,12 +103,12 @@ class ChapterPageState extends State<ChapterPage> {
                 IconButton(
                   icon: Icon(Icons.menu),
                   onPressed: () {
-                    Navigator.pushReplacementNamed(
+                    Navigator.pushNamed(
                       context,
                       "/book",
                       arguments: book.ScreenArguments(
                         bid: chapter.bid.toString(),
-                        replacHistory: true,
+                        popMode: true,
                       ),
                     );
                   },

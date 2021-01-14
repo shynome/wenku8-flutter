@@ -13,8 +13,8 @@ class BookPage extends StatefulWidget {
 
 class ScreenArguments {
   String bid;
-  bool replacHistory = false;
-  ScreenArguments({this.bid, this.replacHistory});
+  bool popMode = false;
+  ScreenArguments({this.bid, this.popMode});
 }
 
 class BookPageState extends State<BookPage> {
@@ -46,7 +46,7 @@ class BookPageState extends State<BookPage> {
         }
         return ChaptersVols(
           book: snapshot.data,
-          replacHistory: args.replacHistory ?? false,
+          popMode: args.popMode ?? false,
         );
       },
     );

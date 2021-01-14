@@ -6,10 +6,21 @@ import 'package:fluttertoast/fluttertoast.dart';
 import './book.dart' show ScreenArguments;
 import './header.dart';
 
+RoutePredicate popCount(int count) {
+  var cursor = 0;
+  return (Route<dynamic> route) {
+    cursor++;
+    if (cursor <= count) {
+      return false;
+    }
+    return true;
+  };
+}
+
 class ChaptersVol extends StatelessWidget {
   final wenku8.ChaptersVol vol;
-  final bool replacHistory;
-  ChaptersVol(this.vol, this.replacHistory);
+  final bool popMode;
+  ChaptersVol(this.vol, this.popMode);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -35,9 +46,17 @@ class ChaptersVol extends StatelessWidget {
                     minWidth: 0,
                     child: OutlineButton(
                       onPressed: () {
-                        (replacHistory
-                            ? Navigator.pushReplacementNamed
-                            : Navigator.pushNamed)(
+                        if (popMode) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            "/chapter",
+                            popCount(2),
+                            arguments:
+                                chapter.ScreenArguments(cid: e.cid.toString()),
+                          );
+                          return;
+                        }
+                        Navigator.pushNamed(
                           context,
                           "/chapter",
                           arguments:
@@ -60,8 +79,8 @@ class ChaptersVol extends StatelessWidget {
 
 class ChaptersVols extends StatefulWidget {
   final wenku8.Book book;
-  final bool replacHistory;
-  ChaptersVols({this.book, this.replacHistory});
+  final bool popMode;
+  ChaptersVols({this.book, this.popMode});
 
   @override
   State<StatefulWidget> createState() {
@@ -113,7 +132,7 @@ class ChaptersVolsState extends State<ChaptersVols> {
       Header(widget.book),
     ];
     list.addAll(widget.book.chaptersVols
-        .map((vol) => ChaptersVol(vol, widget.replacHistory)));
+        .map((vol) => ChaptersVol(vol, widget.popMode)));
     list = list.map((e) => Container(child: e)).toList();
     return Scaffold(
       appBar: AppBar(
