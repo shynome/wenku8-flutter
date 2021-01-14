@@ -122,6 +122,7 @@ class Record {
   int bid;
   int vid;
   int cid;
+  int offset;
   DateTime updatedAt;
   DateTime createdAt;
 
@@ -132,6 +133,7 @@ class Record {
     this.vid,
     this.updatedAt,
     this.createdAt,
+    this.offset,
   });
 
   Map<String, dynamic> toMap() {
@@ -140,6 +142,7 @@ class Record {
       "bid": bid,
       "vid": vid,
       "cid": cid,
+      "offset": offset ?? 0,
       "updated_at": updatedAt.toUtc().millisecondsSinceEpoch,
       "created_at": createdAt.toUtc().millisecondsSinceEpoch,
     };
@@ -154,6 +157,7 @@ class Record {
     bid = map["bid"];
     cid = map["cid"];
     vid = map["vid"];
+    offset = map["offset"] ?? 0;
     updatedAt = DateTime.fromMillisecondsSinceEpoch(map["updated_at"]);
     createdAt = DateTime.fromMillisecondsSinceEpoch(map["created_at"]);
   }

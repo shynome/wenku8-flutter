@@ -263,7 +263,7 @@ class Wenku8Client {
     return record;
   }
 
-  Future updateReadRecord(int cid) async {
+  Future updateReadRecord(int cid, [int offset = 0]) async {
     var chapter = await getChapter(cid);
     var record = await getReadRecord(chapter.bid);
     if (record == null) {
@@ -271,6 +271,7 @@ class Wenku8Client {
         bid: chapter.bid,
         vid: chapter.vid,
         cid: chapter.cid,
+        offset: offset,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
@@ -284,6 +285,7 @@ class Wenku8Client {
         "bid": chapter.bid,
         "vid": chapter.vid,
         "cid": chapter.cid,
+        "offset": offset,
         "updated_at": DateTime.now().toUtc().millisecondsSinceEpoch,
       },
       where: "bid = ?",

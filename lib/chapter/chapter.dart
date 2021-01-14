@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:wenku8/wenku8/client.dart';
 import 'package:wenku8/wenku8/webku8.dart';
-import '../wenku8/utils.dart';
 import './next.dart';
 import '../book/book.dart' as book;
+import 'dart:async';
 
 class ChapterPage extends StatefulWidget {
   @override
@@ -18,20 +17,52 @@ class ScreenArguments {
   ScreenArguments({this.cid});
 }
 
-class Body extends StatelessWidget {
+class Body extends StatefulWidget {
   final Widget appBar;
   final Widget child;
   final Widget last;
-  Body(this.appBar, this.child, [this.last]);
+  final int cid;
+  final int offset;
+  Body({this.appBar, this.child, this.last, this.cid, this.offset});
+  @override
+  State<StatefulWidget> createState() {
+    return BodyState();
+  }
+}
+
+class BodyState extends State<Body> {
+  ScrollController _controller;
+  Timer timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController(
+      initialScrollOffset: widget.offset.toDouble(),
+    );
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      var offset = _controller.offset.toInt();
+      client.updateReadRecord(widget.cid, offset);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var l = [appBar, child];
-    if (last != null) {
-      l.add(last);
-    }
     return Scrollbar(
+      controller: _controller,
       child: CustomScrollView(
-        slivers: l,
+        controller: _controller,
+        slivers: [
+          widget.appBar,
+          widget.child,
+          widget.last,
+        ],
       ),
     );
   }
@@ -41,6 +72,7 @@ class FState {
   List<String> content;
   Chapter chapter;
   ChaptersVol vol;
+  Record record;
 }
 
 Future<FState> getFState(String _cid) async {
@@ -51,8 +83,9 @@ Future<FState> getFState(String _cid) async {
   chapter.content = "";
   f.chapter = chapter;
   f.vol = await client.getChaptersVol(chapter.vid);
+  f.record = await client.getReadRecord(chapter.bid);
   // 更新阅读记录
-  client.updateReadRecord(cid);
+  client.updateReadRecord(cid, 0);
   return f;
 }
 
@@ -78,19 +111,34 @@ class ChapterPageState extends State<ChapterPage> {
         future: f,
         builder: (ctx, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return Body(
-              SliverAppBar(
-                title: Text("加载中"),
-                floating: true,
+            return Scrollbar(
+              child: CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    title: Text("加载中"),
+                    floating: true,
+                  ),
+                  SliverToBoxAdapter(child: LinearProgressIndicator()),
+                ],
               ),
-              SliverToBoxAdapter(child: LinearProgressIndicator()),
             );
           }
           var chapter = snapshot.data.chapter;
           var content = snapshot.data.content;
+          var record = snapshot.data.record;
           var vol = snapshot.data.vol;
+          var offset = 0;
+          if (record.cid == chapter.cid) {
+            offset = record.offset;
+          }
           return Body(
-            SliverAppBar(
+            cid: chapter.cid,
+            offset: offset,
+            last: SliverPadding(
+              padding: const EdgeInsets.fromLTRB(15, 5, 15, 100),
+              sliver: SliverToBoxAdapter(child: NextChapter(chapter)),
+            ),
+            appBar: SliverAppBar(
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -115,7 +163,7 @@ class ChapterPageState extends State<ChapterPage> {
                 )
               ],
             ),
-            SliverPadding(
+            child: SliverPadding(
               padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate(
@@ -126,10 +174,6 @@ class ChapterPageState extends State<ChapterPage> {
                   childCount: content.length,
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(15, 5, 15, 100),
-              sliver: SliverToBoxAdapter(child: NextChapter(chapter)),
             ),
           );
         },
