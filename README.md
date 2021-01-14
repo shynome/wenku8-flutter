@@ -1,16 +1,10 @@
 # wenku8
 
-A new Flutter project.
+[轻小说文库](http://www.wenku8.net/index.php)的阅读器, 所有缓存内容都在 `wenku8.db` 这个 sqlite3 文件中.
 
-## Getting Started
+## build
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 首先自行配置签名: https://flutter.cn/docs/deployment/android#create-a-keystore
+- 自行全局替换包名: `com.shynome.wenku8`
+- 编译 `flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi`
+- 选择适合你手机架构的包进行安装, 如果不清楚的话在上一步使用 `flutter build apk` 进行编译
