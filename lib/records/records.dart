@@ -7,6 +7,7 @@ import 'package:wenku8/wenku8/webku8.dart';
 import '../home.dart';
 import '../chapter/chapter.dart' as chapter;
 import 'package:flutter_slidable/flutter_slidable.dart';
+import '../wenku8/records-changed-count.dart' show count;
 
 class _Item {
   Record record;
@@ -69,36 +70,47 @@ class RecordsRenderState extends State<RecordsRender>
   @override
   bool get wantKeepAlive => true;
 
+  GlobalKey<RefreshIndicatorState> _indicatorKey =
+      GlobalKey<RefreshIndicatorState>();
+
   Future<List<_Item>> data;
+  List<_Item> items;
+  int lastCount;
 
   @override
   void initState() {
     super.initState();
     data = getRecords();
-  }
-
-  refresh() async {
-    var d = getRecords();
-    if (data == d) {
-      return;
-    }
-    await d;
-    setState(() {
-      data = d;
-    });
+    lastCount = count.value;
   }
 
   deleteRecord(int rid) async {
     await db.delete(Record.TableName, where: "rid = ?", whereArgs: [rid]);
-    refresh();
+    count.value++;
+    _indicatorKey.currentState.show();
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
+    if (lastCount != count.value) {
+      setState(() {
+        lastCount = count.value;
+        _indicatorKey.currentState.show();
+      });
+    }
+
     return RefreshIndicator(
+      key: _indicatorKey,
       onRefresh: () async {
-        await refresh();
+        var _items = await getRecords();
+        setState(() {
+          // 重置 count.value
+          count.value = 0;
+          items = _items;
+          lastCount = 0;
+        });
       },
       child: Scrollbar(
         child: FutureBuilder<List<_Item>>(
@@ -109,7 +121,7 @@ class RecordsRenderState extends State<RecordsRender>
                 children: [LinearProgressIndicator()],
               );
             }
-            var records = snapshot.data;
+            var records = items ?? snapshot.data;
             if (records.length == 0) {
               return ListView(
                 children: [
@@ -129,8 +141,9 @@ class RecordsRenderState extends State<RecordsRender>
                 ],
               );
             }
-            return ListView.builder(
+            return ListView.separated(
               itemCount: records.length,
+              separatorBuilder: (context, index) => Divider(),
               itemBuilder: (context, index) {
                 var item = records[index];
                 var n = item.names;

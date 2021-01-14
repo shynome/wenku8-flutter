@@ -1,6 +1,7 @@
 import '../db/db.dart' show db;
 import './webku8.dart';
 import './utils.dart' as utils;
+import 'records-changed-count.dart' show count;
 
 class Wenku8Client {
   Future<Book> getBook2(String bid) async {
@@ -273,6 +274,7 @@ class Wenku8Client {
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );
+      count.value++;
       await db.insert(Record.TableName, record.toMap());
       return;
     }
@@ -287,6 +289,11 @@ class Wenku8Client {
       where: "bid = ?",
       whereArgs: [chapter.bid],
     );
+    if (record.vid == chapter.vid && record.cid == chapter.cid) {
+      // do nothing
+    } else {
+      count.value++;
+    }
   }
 }
 
