@@ -8,7 +8,8 @@ import './header.dart';
 
 class ChaptersVol extends StatelessWidget {
   final wenku8.ChaptersVol vol;
-  ChaptersVol(this.vol);
+  final bool replacHistory;
+  ChaptersVol(this.vol, this.replacHistory);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -34,12 +35,13 @@ class ChaptersVol extends StatelessWidget {
                     minWidth: 0,
                     child: OutlineButton(
                       onPressed: () {
-                        Navigator.pushNamed(
+                        (replacHistory
+                            ? Navigator.pushReplacementNamed
+                            : Navigator.pushNamed)(
                           context,
                           "/chapter",
-                          arguments: chapter.ScreenArguments(
-                            cid: e.cid.toString(),
-                          ),
+                          arguments:
+                              chapter.ScreenArguments(cid: e.cid.toString()),
                         );
                       },
                       child: Text(e.name),
@@ -58,7 +60,8 @@ class ChaptersVol extends StatelessWidget {
 
 class ChaptersVols extends StatefulWidget {
   final wenku8.Book book;
-  ChaptersVols(this.book);
+  final bool replacHistory;
+  ChaptersVols({this.book, this.replacHistory});
 
   @override
   State<StatefulWidget> createState() {
@@ -109,7 +112,8 @@ class ChaptersVolsState extends State<ChaptersVols> {
     var list = <Widget>[
       Header(widget.book),
     ];
-    list.addAll(widget.book.chaptersVols.map((vol) => ChaptersVol(vol)));
+    list.addAll(widget.book.chaptersVols
+        .map((vol) => ChaptersVol(vol, widget.replacHistory)));
     list = list.map((e) => Container(child: e)).toList();
     return Scaffold(
       appBar: AppBar(

@@ -241,6 +241,53 @@ class Wenku8Client {
       return ChaptersVol.fromMap(value.first);
     });
   }
+
+  Future<Record> getReadRecord(int bid) async {
+    Record toRecord(List<Map<String, dynamic>> maps) {
+      if (maps.length == 0) {
+        return null;
+      }
+      return Record.fromMap(maps.first);
+    }
+
+    var record = await db
+        .query(
+          Record.TableName,
+          where: "bid = ?",
+          whereArgs: [bid],
+          limit: 1,
+        )
+        .then((maps) => toRecord(maps));
+
+    return record;
+  }
+
+  Future updateReadRecord(int cid) async {
+    var chapter = await getChapter(cid);
+    var record = await getReadRecord(chapter.bid);
+    if (record == null) {
+      record = Record(
+        bid: chapter.bid,
+        vid: chapter.vid,
+        cid: chapter.cid,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+      await db.insert(Record.TableName, record.toMap());
+      return;
+    }
+    await db.update(
+      Record.TableName,
+      <String, dynamic>{
+        "bid": chapter.bid,
+        "vid": chapter.vid,
+        "cid": chapter.cid,
+        "updated_at": DateTime.now().toUtc().millisecondsSinceEpoch,
+      },
+      where: "bid = ?",
+      whereArgs: [chapter.bid],
+    );
+  }
 }
 
 var client = Wenku8Client();

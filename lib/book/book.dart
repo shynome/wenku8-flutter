@@ -13,7 +13,8 @@ class BookPage extends StatefulWidget {
 
 class ScreenArguments {
   String bid;
-  ScreenArguments({this.bid});
+  bool replacHistory = false;
+  ScreenArguments({this.bid, this.replacHistory});
 }
 
 class BookPageState extends State<BookPage> {
@@ -43,7 +44,10 @@ class BookPageState extends State<BookPage> {
             body: LinearProgressIndicator(),
           );
         }
-        return ChaptersVols(snapshot.data);
+        return ChaptersVols(
+          book: snapshot.data,
+          replacHistory: args.replacHistory ?? false,
+        );
       },
     );
   }

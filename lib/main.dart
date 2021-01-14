@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wenku8/chapter/chapter.dart';
+import 'package:wenku8/records/records.dart';
 import './search.dart';
 import 'book/book.dart';
+import './home.dart';
 import 'db/db.dart' as db;
 
 void main() async {
@@ -20,11 +22,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: "/search",
+      initialRoute: "/home",
       routes: {
+        "/home": (context) => HomePage(),
         "/search": (context) => SearchPage(),
         "/book": (context) => BookPage(),
         '/chapter': (context) => ChapterPage(),
+        '/records': (context) => RecordsPage(),
       },
     );
   }

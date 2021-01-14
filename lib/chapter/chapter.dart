@@ -4,6 +4,7 @@ import 'package:wenku8/wenku8/client.dart';
 import 'package:wenku8/wenku8/webku8.dart';
 import '../wenku8/utils.dart';
 import './next.dart';
+import '../book/book.dart' as book;
 
 class ChapterPage extends StatefulWidget {
   @override
@@ -45,6 +46,8 @@ Future<FState> getFState(String _cid) async {
   chapter.content = "";
   f.chapter = chapter;
   f.vol = await client.getChaptersVol(chapter.vid);
+  // 更新阅读记录
+  client.updateReadRecord(cid);
   return f;
 }
 
@@ -95,6 +98,21 @@ class ChapterPageState extends State<ChapterPage> {
                 ],
               ),
               floating: true,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      "/book",
+                      arguments: book.ScreenArguments(
+                        bid: chapter.bid.toString(),
+                        replacHistory: true,
+                      ),
+                    );
+                  },
+                )
+              ],
               // expandedHeight: 80,
               // flexibleSpace: FlexibleSpaceBar(title: Text(chapter.name)),
             ),

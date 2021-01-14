@@ -114,3 +114,47 @@ class Chapter {
     content = map["content"];
   }
 }
+
+class Record {
+  static const TableName = "records";
+
+  int rid;
+  int bid;
+  int vid;
+  int cid;
+  DateTime updatedAt;
+  DateTime createdAt;
+
+  Record({
+    this.rid,
+    this.cid,
+    this.bid,
+    this.vid,
+    this.updatedAt,
+    this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
+      "rid": rid,
+      "bid": bid,
+      "vid": vid,
+      "cid": cid,
+      "updated_at": updatedAt.toUtc().millisecondsSinceEpoch,
+      "created_at": createdAt.toUtc().millisecondsSinceEpoch,
+    };
+    if (rid != null) {
+      map["rid"] = rid;
+    }
+    return map;
+  }
+
+  Record.fromMap(Map<String, dynamic> map) {
+    rid = map["rid"];
+    bid = map["bid"];
+    cid = map["cid"];
+    vid = map["vid"];
+    updatedAt = DateTime.fromMillisecondsSinceEpoch(map["updated_at"]);
+    createdAt = DateTime.fromMillisecondsSinceEpoch(map["created_at"]);
+  }
+}
