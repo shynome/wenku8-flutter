@@ -112,36 +112,36 @@ class RecordsRenderState extends State<RecordsRender>
           lastCount = 0;
         });
       },
-      child: Scrollbar(
-        child: FutureBuilder<List<_Item>>(
-          future: data,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return Column(
-                children: [LinearProgressIndicator()],
-              );
-            }
-            var records = items ?? snapshot.data;
-            if (records.length == 0) {
-              return ListView(
+      child: FutureBuilder<List<_Item>>(
+        future: data,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return Column(
+              children: [LinearProgressIndicator()],
+            );
+          }
+          var records = items ?? snapshot.data;
+          if (records.length == 0) {
+            return Center(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "没有阅读记录, 右滑去搜索页吧",
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ],
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                    child: Wrap(
+                      children: [
+                        Text(
+                          "没有阅读记录, 右滑去搜索页吧",
+                          style: TextStyle(fontSize: 18),
+                        ),
+                      ],
                     ),
-                  ),
+                  )
                 ],
-              );
-            }
-            return ListView.separated(
+              ),
+            );
+          }
+          return Scrollbar(
+            child: ListView.separated(
               itemCount: records.length,
               separatorBuilder: (context, index) => Divider(),
               itemBuilder: (context, index) {
@@ -177,9 +177,9 @@ class RecordsRenderState extends State<RecordsRender>
                   ],
                 );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

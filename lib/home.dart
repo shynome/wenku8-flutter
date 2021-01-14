@@ -11,7 +11,7 @@ class _TabItem {
 
 var tabs = [
   _TabItem("搜索", "/home"),
-  _TabItem("历史记录", "/home"),
+  _TabItem("阅读记录", "/home"),
 ];
 
 class HomePage extends StatefulWidget {
@@ -74,12 +74,14 @@ class HomePageState extends State<HomePage>
             tabs: tabs.map((e) => Tab(text: e.name)).toList(),
           ),
         ),
-        body: TabBarView(
-          controller: _controller,
-          children: [
-            SearchForm(),
-            RecordsRender(),
-          ],
+        body: SafeArea(
+          child: TabBarView(
+            controller: _controller,
+            children: [
+              SearchForm(),
+              RecordsRender(),
+            ],
+          ),
         ),
       ),
     );
