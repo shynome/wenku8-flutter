@@ -43,6 +43,32 @@ class BookPageState extends State<BookPage> {
             ),
             body: LinearProgressIndicator(),
           );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("出错了"),
+            ),
+            body: Container(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("加载数据出错了"),
+                  Text("可能原因是:"),
+                  Text("- 网络请求出错 --> 检查网络是否连通"),
+                  Text("- 该书不存在 --> 检查bid是否输入正确(当前bid=${args.bid})"),
+                  OutlineButton(
+                    child: Text("点击重试"),
+                    onPressed: () {
+                      setState(() {
+                        book = client.getBook2(args.bid);
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
         }
         return ChaptersVols(
           book: snapshot.data,

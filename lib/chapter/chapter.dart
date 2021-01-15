@@ -122,6 +122,39 @@ class ChapterPageState extends State<ChapterPage> {
                 ],
               ),
             );
+          } else if (true || snapshot.hasError) {
+            return Scrollbar(
+              child: CustomScrollView(
+                slivers: [
+                  SliverAppBar(
+                    title: Text("出错了"),
+                    floating: true,
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: const EdgeInsets.all(15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("加载数据出错了"),
+                          Text("可能原因是:"),
+                          Text("- 网络请求出错 --> 检查网络是否连通"),
+                          Text("- 该书解析失败 --> 向开发者反馈 '书名+${args.cid}' 解析失败"),
+                          OutlineButton(
+                            child: Text("点击重试"),
+                            onPressed: () {
+                              setState(() {
+                                f = getFState(cid);
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
           var chapter = snapshot.data.chapter;
           var content = snapshot.data.content;
