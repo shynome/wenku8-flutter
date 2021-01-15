@@ -42,7 +42,7 @@ Future<_Names> getNames({int bid, int vid, int cid}) {
 
 Future<List<_Item>> getRecords() async {
   var records = await db
-      .query(Record.TableName)
+      .query(Record.TableName, orderBy: "`updated_at` desc")
       .then((value) => value.map((e) => Record.fromMap(e)));
   var items = Future.wait(records.map((record) async {
     var item = _Item();
