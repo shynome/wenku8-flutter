@@ -122,7 +122,7 @@ class ChapterPageState extends State<ChapterPage> {
                 ],
               ),
             );
-          } else if (true || snapshot.hasError) {
+          } else if (snapshot.hasError) {
             return Scrollbar(
               child: CustomScrollView(
                 slivers: [
