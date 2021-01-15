@@ -147,9 +147,11 @@ class ChaptersVolsState extends State<ChaptersVols> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(8),
-        children: list,
+      body: Scrollbar(
+        child: ListView(
+          padding: const EdgeInsets.all(8),
+          children: list,
+        ),
       ),
     );
   }
