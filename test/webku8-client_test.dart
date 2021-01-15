@@ -29,7 +29,7 @@ void main() async {
       var chapter = await client.getChapter(65286);
       return;
     });
-    test("getChapter", () async {
+    test("updateReadRecord", () async {
       await client.updateReadRecord(65286);
       return;
     });
