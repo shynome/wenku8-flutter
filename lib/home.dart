@@ -69,6 +69,12 @@ class HomePageState extends State<HomePage>
       child: Scaffold(
         appBar: AppBar(
           title: Text(tabs[nowIndex].name),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.info),
+              onPressed: () => Navigator.pushNamed(context, "/about"),
+            ),
+          ],
           bottom: TabBar(
             controller: _controller,
             tabs: tabs.map((e) => Tab(text: e.name)).toList(),
@@ -105,6 +111,12 @@ class HomePageWrapper extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(tabs[index].name),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.info),
+              onPressed: () => Navigator.pushNamed(context, "/about"),
+            ),
+          ],
           bottom: TabBar(
             onTap: (index) {
               if (this.index == index) {
