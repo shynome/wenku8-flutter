@@ -21,7 +21,8 @@ RoutePredicate popCount(int count) {
 class ChaptersVol extends StatelessWidget {
   final wenku8.ChaptersVol vol;
   final bool popMode;
-  ChaptersVol(this.vol, this.popMode);
+  final int cid;
+  ChaptersVol({this.vol, this.popMode, this.cid});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -42,30 +43,37 @@ class ChaptersVol extends StatelessWidget {
               child: Wrap(
                 spacing: 10.0,
                 runSpacing: 10.0,
-                children: vol.chapters.map((e) {
+                children: vol.chapters.map((vol) {
+                  var handlePressed = () {
+                    if (popMode) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        "/chapter",
+                        popCount(2),
+                        arguments:
+                            chapter.ScreenArguments(cid: vol.cid.toString()),
+                      );
+                      return;
+                    }
+                    Navigator.pushNamed(
+                      context,
+                      "/chapter",
+                      arguments:
+                          chapter.ScreenArguments(cid: vol.cid.toString()),
+                    );
+                  };
+                  BorderSide borderSide;
+                  if (vol.cid == cid) {
+                    borderSide =
+                        BorderSide(color: Theme.of(context).textSelectionColor);
+                  }
                   return ButtonTheme(
                     minWidth: 0,
                     child: OutlineButton(
-                      onPressed: () {
-                        if (popMode) {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            "/chapter",
-                            popCount(2),
-                            arguments:
-                                chapter.ScreenArguments(cid: e.cid.toString()),
-                          );
-                          return;
-                        }
-                        Navigator.pushNamed(
-                          context,
-                          "/chapter",
-                          arguments:
-                              chapter.ScreenArguments(cid: e.cid.toString()),
-                        );
-                      },
-                      child: Text(e.name),
+                      onPressed: handlePressed,
+                      child: Text(vol.name),
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      borderSide: borderSide,
                     ),
                   );
                 }).toList(),
@@ -82,7 +90,8 @@ class ChaptersVols extends StatefulWidget {
   final wenku8.Book book;
   final bool popMode;
   final int position;
-  ChaptersVols({this.book, this.popMode, this.position = 0});
+  final int cid;
+  ChaptersVols({this.book, this.popMode, this.position = -1, this.cid});
 
   @override
   State<StatefulWidget> createState() {
@@ -133,8 +142,12 @@ class ChaptersVolsState extends State<ChaptersVols> {
     var list = <Widget>[
       Header(widget.book),
     ];
-    list.addAll(widget.book.chaptersVols
-        .map((vol) => ChaptersVol(vol, widget.popMode)));
+    list.addAll(
+      widget.book.chaptersVols.map(
+        (vol) =>
+            ChaptersVol(vol: vol, popMode: widget.popMode, cid: widget.cid),
+      ),
+    );
     list = list.map((e) => Container(child: e)).toList();
     return Scaffold(
       appBar: AppBar(
