@@ -190,6 +190,7 @@ class ChapterPageState extends State<ChapterPage> {
                       arguments: book.ScreenArguments(
                         bid: chapter.bid.toString(),
                         popMode: true,
+                        vid: chapter.vid,
                       ),
                     );
                   },

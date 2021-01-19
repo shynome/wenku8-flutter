@@ -5,6 +5,7 @@ import '../chapter/chapter.dart' as chapter;
 import 'package:fluttertoast/fluttertoast.dart';
 import './book.dart' show ScreenArguments;
 import './header.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 RoutePredicate popCount(int count) {
   var cursor = 0;
@@ -80,7 +81,8 @@ class ChaptersVol extends StatelessWidget {
 class ChaptersVols extends StatefulWidget {
   final wenku8.Book book;
   final bool popMode;
-  ChaptersVols({this.book, this.popMode});
+  final int position;
+  ChaptersVols({this.book, this.popMode, this.position = 0});
 
   @override
   State<StatefulWidget> createState() {
@@ -148,9 +150,13 @@ class ChaptersVolsState extends State<ChaptersVols> {
         ],
       ),
       body: Scrollbar(
-        child: ListView(
+        child: ScrollablePositionedList.builder(
           padding: const EdgeInsets.all(8),
-          children: list,
+          itemCount: list.length,
+          initialScrollIndex: widget.position + 1, //因为最上面有个操作栏
+          itemBuilder: (context, index) {
+            return list[index];
+          },
         ),
       ),
     );

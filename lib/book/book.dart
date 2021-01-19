@@ -13,8 +13,9 @@ class BookPage extends StatefulWidget {
 
 class ScreenArguments {
   String bid;
-  bool popMode = false;
-  ScreenArguments({this.bid, this.popMode});
+  bool popMode;
+  int vid;
+  ScreenArguments({this.bid, this.popMode = false, this.vid = 0});
 }
 
 class BookPageState extends State<BookPage> {
@@ -70,9 +71,18 @@ class BookPageState extends State<BookPage> {
             ),
           );
         }
+        var _book = snapshot.data;
+        var position = -1;
+        for (var vol in _book.chaptersVols) {
+          if (vol.vid == args.vid) {
+            position = vol.order;
+            break;
+          }
+        }
         return ChaptersVols(
-          book: snapshot.data,
-          popMode: args.popMode ?? false,
+          book: _book,
+          popMode: args.popMode,
+          position: position,
         );
       },
     );
