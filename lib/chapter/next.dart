@@ -100,14 +100,14 @@ class NextChapterState extends State<NextChapter> {
               onPressed: null,
             );
           }
-          var chapter = snapshot.data.chapter;
-          var vol = snapshot.data.vol;
-          if (chapter == null) {
-            OutlineButton(
+          if (snapshot.data == null) {
+            return OutlineButton(
               child: Text("没有更多了"),
               onPressed: null,
             );
           }
+          var chapter = snapshot.data.chapter;
+          var vol = snapshot.data.vol;
           var txt = "下一章节: ${chapter.name}";
           if (widget.chapter.vid != vol.vid) {
             txt = "下一章: ${vol.name} - ${chapter.name}";
