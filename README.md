@@ -8,3 +8,7 @@
 - 自行全局替换包名: `com.shynome.wenku8`
 - 编译 `flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi`
 - 选择适合你手机架构的包进行安装, 如果不清楚的话在上一步使用 `flutter build apk` 进行编译
+
+## 下载
+
+可前往 Google Play 应用商店下载: https://play.google.com/store/apps/details?id=com.shynome.wenku8
