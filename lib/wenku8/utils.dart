@@ -72,7 +72,7 @@ var delimiter = new RegExp(r'\s+\r\n');
 
 Future<String> getChapterContent(String bid, String cid) async {
   var link =
-      "http://dl.wenku8.com/packtxt.php?aid=${bid}&vid=${cid}&aname=1&vname=1";
+      "https://dl.wenku8.com/packtxt.php?aid=${bid}&vid=${cid}&aname=1&vname=1";
   var content =
       await mustGetLink(link).then((value) => decodeUtf16le(value.bodyBytes));
   return content;
