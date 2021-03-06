@@ -1,3 +1,9 @@
+## 1.1.7
+
+### Fix
+
+- 修复 Andriod API 28 and iOS 9 禁用 http 连接的问题
+
 ## 1.1.6
 
 ### Fix
