@@ -1,3 +1,10 @@
+## 1.1.8
+
+### Change
+
+- 使用自带的 SnackBar 替换了 Fluttertoast
+- 目录页刷新时会带上当前页面参数了
+
 ## 1.1.7
 
 ### Fix
