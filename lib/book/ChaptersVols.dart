@@ -115,11 +115,7 @@ class ChaptersVolsState extends State<ChaptersVols> {
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(SnackBar(content: Text("有新章节, 刷新页面中")));
     final ScreenArguments args = ModalRoute.of(context).settings?.arguments;
-    Navigator.pushReplacementNamed(
-      context,
-      "/book",
-      arguments: args,
-    );
+    Navigator.pushReplacementNamed(context, "/book", arguments: args);
     return;
   }
 
