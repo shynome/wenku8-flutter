@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wenku8/wenku8/client.dart';
 import '../wenku8/webku8.dart' as wenku8;
 import '../chapter/chapter.dart' as chapter;
-import 'package:fluttertoast/fluttertoast.dart';
 import './book.dart' show ScreenArguments;
 import './header.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -102,17 +101,24 @@ class ChaptersVols extends StatefulWidget {
 class ChaptersVolsState extends State<ChaptersVols> {
   bool refreshing = false;
   _refresh(BuildContext context) async {
-    Fluttertoast.showToast(msg: "查询新章节中");
+    var messenger = ScaffoldMessenger.of(context);
+    messenger.showSnackBar(SnackBar(
+      content: Text("查询新章节中..."),
+      duration: Duration(days: 1),
+    ));
     var newChapterCount = await client.updateBook2(widget.book.bid.toString());
     if (newChapterCount == 0) {
-      Fluttertoast.showToast(msg: "没有新的章节");
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(SnackBar(content: Text("没有新的章节")));
       return;
     }
-    Fluttertoast.showToast(msg: "有新章节, 刷新页面中");
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(SnackBar(content: Text("有新章节, 刷新页面中")));
+    final ScreenArguments args = ModalRoute.of(context).settings?.arguments;
     Navigator.pushReplacementNamed(
       context,
       "/book",
-      arguments: ScreenArguments(bid: widget.book.bid.toString()),
+      arguments: args,
     );
     return;
   }
